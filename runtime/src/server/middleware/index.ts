@@ -99,9 +99,11 @@ export function serve({ prefix, pathname, cache_control }: {
 	pathname?: string,
 	cache_control: string
 }) {
+	// [#1442](https://github.com/sveltejs/sapper/issues/1142)
+	// Ensure the path request ends with an extension, to filter out routes under "/client/".
 	const filter = pathname
 		? (req: Req) => req.path === pathname
-		: (req: Req) => req.path.startsWith(prefix);
+		: (req: Req) => req.path.startsWith(prefix) && /\..*$/.test(req.path);
 
 	const cache: Map<string, Buffer> = new Map();
 
